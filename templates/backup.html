@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block title %}Backup{% endblock %}{% block content %}
+<h2 style="margin:0">💾 Backup & Restore</h2><p style="color:#64748b">Protect your school data — backup every Friday</p>
+<div class="card" style="text-align:center;padding:28px"><div style="font-size:50px">💾</div><h3>Your Database: db.sqlite3</h3><p style="color:#64748b">All learners, teachers, fees are inside this one file. Copy it to keep a backup.</p>
+<form method="post">{% csrf_token %}<button class="btn" style="padding:14px 28px">⬇️ Create Backup Now</button></form></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px">
+<div class="card"><h3>✅ How to Backup (Manual)</h3><p>1. Stop server (Ctrl + C)<br>2. Copy <b>db.sqlite3</b> file<br>3. Paste to Desktop / Google Drive / USB<br>4. Start server again</p></div>
+<div class="card"><h3>🔄 How to Restore</h3><p>1. Stop server<br>2. Replace <b>db.sqlite3</b> with your backup copy<br>3. Run <b>py manage.py runserver</b><br>4. All data comes back</p></div>
+</div>
+{% endblock %}

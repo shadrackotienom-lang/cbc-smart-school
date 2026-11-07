@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% block title %}Reports{% endblock %}{% block content %}
+<h2 style="margin:0">📈 Reports</h2><p style="color:#64748b">Download / Print School Reports</p>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+<div class="card" style="text-align:center"><div style="font-size:36px">👧</div><b>Learners Report</b><p style="color:#64748b">{{ learners|length }} learners</p><a href="{% url 'export_learners' %}" class="btn">⬇️ Download CSV</a></div>
+<div class="card" style="text-align:center"><div style="font-size:36px">🏫</div><b>Class Report</b><p style="color:#64748b">{{ classes|length }} classes</p><a href="{% url 'class_report' %}" class="btn">View Report →</a></div>
+<div class="card" style="text-align:center"><div style="font-size:36px">💰</div><b>Fees Report</b><p style="color:#64748b">{{ term }} {{ year }}</p><a href="{% url 'fees' %}" class="btn">View Fees →</a></div>
+<div class="card" style="text-align:center"><div style="font-size:36px">✅</div><b>Attendance Report</b><p style="color:#64748b">Today: {{ today }}</p><a href="{% url 'attendance' %}" class="btn">View Attendance →</a></div>
+<div class="card" style="text-align:center"><div style="font-size:36px">📝</div><b>Results Report</b><p style="color:#64748b">Exams</p><a href="{% url 'results' %}" class="btn">View Results →</a></div>
+<div class="card" style="text-align:center"><div style="font-size:36px">📊</div><b>Analytics</b><p style="color:#64748b">Charts</p><a href="{% url 'analytics' %}" class="btn">View Analytics →</a></div>
+</div>
+{% endblock %}

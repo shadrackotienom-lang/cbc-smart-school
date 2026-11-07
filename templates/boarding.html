@@ -1,0 +1,45 @@
+{% extends 'base.html' %}{% block title %}Boarding{% endblock %}{% block content %}
+<h2 style="margin:0">🏠 Boarding</h2><p style="color:#64748b">For schools that offer boarding. Day schools can ignore this page. • Houses: <b>{{ total_houses }}</b> • Beds: <b>{{ total_beds }}</b> • Occupied: <b>{{ occupied_beds }}</b> • Free: <b style="color:#059669">{{ free_beds }}</b> • Boarding Learners: <b>{{ total_boarding_learners }}</b> • Expected: <b>KSh {{ total_boarding_expected }}</b> • Paid: <b>KSh {{ total_boarding_paid }}</b> • Balance: <b style="color:#dc2626">KSh {{ total_boarding_balance }}</b></p>
+
+{% if not offers_boarding %}
+<div class="card" style="background:#fff7ed;border:1px solid #fbbf24;padding:14px;margin-bottom:14px"><b>⚠️ Boarding Not Turned On Yet</b><p style="margin:6px 0 0">To turn it on, do ONE of these:<br>1. Go to <b>School Settings → Boarding / Day → Choose Boarding or Day + Boarding → Save</b><br>2. OR Register a learner as <b>Boarding</b> in Learners<br>3. OR Just add a House below — page will activate automatically.<br><b>You can still use this page now.</b></p></div>
+{% endif %}
+
+<div class="card" style="margin-bottom:14px"><h3>➕ 1. Add Boarding House / Dorm</h3><p style="color:#64748b;font-size:13px">Example: Simba House (Boys), Elgon Dorm (Girls), Mt Kenya House. One house = one dorm building.</p>
+<form method="post" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">{% csrf_token %}<input type="hidden" name="add_house" value="1">
+<input name="name" placeholder="House / Dorm Name * e.g Simba House" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<select name="gender" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>Boys</option><option>Girls</option><option>Mixed</option></select>
+<input name="capacity" type="number" placeholder="Bed Capacity e.g 40" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="matron_patron" placeholder="Matron / Patron Name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="matron_phone" placeholder="Matron Phone" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="teacher_in_charge" placeholder="Teacher In Charge" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="location" placeholder="Location e.g Near Dining Hall" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;grid-column:1/-1">
+<input name="notes" placeholder="Notes e.g Has 2 bathrooms, Prefects room" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;grid-column:1/-1">
+<button class="btn" style="grid-column:1/-1;padding:14px">🏠 Add House →</button></form></div>
+
+<h3>🏠 Boarding Houses</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">{% for h in houses %}<div class="card"><b>{{ h.name }}</b> • {{ h.gender }}<br><small>Matron: {{ h.matron_patron }} • {{ h.matron_phone }}<br>Teacher: {{ h.teacher_in_charge }} • {{ h.location }}</small><br><br><b>Capacity: {{ h.capacity }}</b> • Occupied: <b>{{ h.occupied }}</b> • Free: <b style="color:#059669">{{ h.free_beds }}</b><br><div style="background:#e2e8f0;height:10px;border-radius:10px;margin-top:8px"><div style="background:#059669;height:10px;border-radius:10px;width:{% widthratio h.occupied h.capacity 100 %}%"></div></div></div>{% empty %}<p style="color:#94a3b8">No house yet — add one above.</p>{% endfor %}</div>
+
+<div class="card" style="margin-bottom:14px"><h3>➕ 2. Assign Learner To Boarding — Record ALL Details</h3>
+<form method="post" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">{% csrf_token %}<input type="hidden" name="assign_learner" value="1">
+<select name="learner" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option value="">-- Select Learner --</option>{% for l in learners %}<option value="{{ l.id }}">{{ l.full_name }} - {{ l.admission_no }} - {{ l.classroom }} - {{ l.boarding_type }}</option>{% endfor %}</select>
+<select name="house" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option value="">-- Select House / Dorm --</option>{% for h in houses %}<option value="{{ h.id }}">{{ h.name }} - Free {{ h.free_beds }} beds</option>{% endfor %}</select>
+<input name="dorm_room" placeholder="Dorm / Room No e.g Room 4" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="bed_no" placeholder="Bed No e.g Bed 12" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="locker_no" placeholder="Locker No e.g L-05" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input type="date" name="check_in_date" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<select name="meal_plan" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>Normal</option><option>Vegetarian</option><option>No Beef</option><option>No Pork</option><option>Allergy Diet</option></select>
+<input name="meal_allergy" placeholder="Food Allergy / Special Diet e.g No milk" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="medical_notes" placeholder="Medical Notes for Matron e.g Asthma, Inhaler" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="belongings" placeholder="Belongings e.g 2 Blankets, Mattress, Trunk, Bucket" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;grid-column:1/-1">
+<input name="parent_visit_allowed" placeholder="Allowed Visitors e.g Father John 0722..., Mother Mary 0722..." style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;grid-column:1/-1">
+<input name="visiting_day" value="Saturday 10am - 4pm" placeholder="Visiting Day" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="pocket_money" type="number" placeholder="Pocket Money Held by Matron (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="boarding_fee_expected" type="number" placeholder="Boarding Fee Expected (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="boarding_fee_paid" type="number" placeholder="Boarding Fee Paid (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="discipline_notes" placeholder="Discipline / Behaviour Notes" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;grid-column:1/-1">
+<button class="btn" style="grid-column:1/-1;background:#059669;padding:14px">✅ Assign To Boarding →</button></form></div>
+
+<h3>👧 Boarding Learners — Full Details</h3><div style="overflow-x:auto"><table style="width:100%;background:#fff;border-collapse:collapse"><tr style="background:#0a2463;color:#fff"><th style="padding:10px;text-align:left">Learner</th><th>House / Bed</th><th>Meal / Medical</th><th>Belongings / Visitors</th><th>Pocket Money</th><th>Fee Bal</th><th>Status</th><th>Action</th></tr>
+{% for a in assignments %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:10px"><b>{{ a.learner.full_name }}</b><br><small>{{ a.learner.admission_no }} • {{ a.learner.classroom }} • {{ a.learner.parent1_name }} • {{ a.learner.parent1_phone }}</small><br><small>Check-in: {{ a.check_in_date }} {% if a.check_out_date %}• Out: {{ a.check_out_date }}{% endif %}</small></td><td style="text-align:center"><b>{{ a.house.name }}</b><br>{{ a.dorm_room }} • Bed {{ a.bed_no }} • Locker {{ a.locker_no }}</td><td><small>{{ a.meal_plan }}<br>{{ a.meal_allergy }}<br><b>Medical:</b> {{ a.medical_notes }}</small></td><td><small><b>Belongings:</b> {{ a.belongings }}<br><b>Visitors:</b> {{ a.parent_visit_allowed }}<br><b>Visiting:</b> {{ a.visiting_day }}</small></td><td style="text-align:center">KSh {{ a.pocket_money }}</td><td style="text-align:center">Exp KSh {{ a.boarding_fee_expected }}<br>Paid KSh {{ a.boarding_fee_paid }}<br><b style="color:#dc2626">Bal KSh {{ a.balance }}</b></td><td style="text-align:center">{% if a.status == 'Active' %}🟢 Active{% else %}{{ a.status }}{% endif %}<br><small>{{ a.discipline_notes }}</small></td><td style="text-align:center">{% if a.status == 'Active' %}<form method="post" style="display:inline">{% csrf_token %}<input type="hidden" name="checkout" value="1"><input type="hidden" name="assignment_id" value="{{ a.id }}"><button style="padding:6px 10px;border-radius:8px;border:1px solid #dc2626;background:#fff;color:#dc2626;cursor:pointer">Check Out</button></form><form method="post" style="display:inline;margin-top:4px">{% csrf_token %}<input type="hidden" name="rollcall" value="1"><input type="hidden" name="assignment_id" value="{{ a.id }}"><input type="hidden" name="present" value="on"><button style="padding:6px 10px;border-radius:8px;border:1px solid #059669;background:#fff;color:#059669;cursor:pointer">✓ Present Today</button></form>{% endif %}</td></tr>
+{% empty %}<tr><td colspan="8" style="padding:20px;text-align:center;color:#94a3b8">No boarding assignments yet — assign a learner above</td></tr>{% endfor %}</table></div>
+{% endblock %}

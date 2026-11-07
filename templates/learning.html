@@ -1,0 +1,12 @@
+{% extends 'base.html' %}{% block title %}E-Learning{% endblock %}{% block content %}
+<h2 style="margin:0">💻 E-Learning — ALL CBC Lessons in Kenya</h2><p style="color:#64748b">Pre-Primary → Lower Primary → Upper Primary → Junior School → Senior School • {{ school.name|default:"CBC Smart School" }}</p>
+
+{% for lvl in cbc_levels %}
+<div style="margin-top:20px"><h3 style="background:{{ lvl.color }};color:#fff;padding:10px 14px;border-radius:10px;margin:0">{{ lvl.level }} • {{ lvl.age }}</h3>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:10px">
+{% for s in lvl.subjects %}<div class="card" style="text-align:center;border-top:5px solid {{ lvl.color }}"><div style="font-size:32px">{{ s.icon }}</div><b>{{ s.name }}</b><p style="color:#64748b;margin:6px 0">{{ s.lessons }} Lessons • CBC</p><button class="btn" style="background:{{ lvl.color }}">Open Lessons →</button></div>{% endfor %}
+</div></div>
+{% endfor %}
+
+<div class="card" style="margin-top:20px"><h3>📺 Featured CBC Lesson</h3><p><b>Mathematics — Grade 7:</b> Fractions, Decimals & Percentages • <b>Integrated Science — Grade 8:</b> Human Body Systems • <b>English — Grade 5:</b> Reading Comprehension</p><button class="btn">▶️ Watch Lesson</button> <button class="btn" style="background:#059669">📄 Download Notes</button> <button class="btn" style="background:#f97316">📝 Take Quiz</button></div>
+{% endblock %}

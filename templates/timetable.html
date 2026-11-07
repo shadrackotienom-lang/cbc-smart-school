@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block title %}Timetable{% endblock %}{% block content %}
+<h2 style="margin:0">📅 Timetable</h2><p style="color:#64748b">{{ school.name|default:"CBC Smart School" }} • {{ term }} {{ year }}</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">{% for c in classes %}<span style="background:#dbeafe;padding:8px 14px;border-radius:20px;font-weight:700">{{ c.name }} {{ c.stream }}</span>{% empty %}<span>No classes yet</span>{% endfor %}</div>
+<div style="overflow-x:auto"><table style="width:100%;background:#fff;border-collapse:collapse;min-width:700px"><tr style="background:#0a2463;color:#fff"><th style="padding:10px">Time</th>{% for d in days %}<th style="padding:10px">{{ d }}</th>{% endfor %}</tr>
+{% for p in periods %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:10px;font-weight:700;background:#f8fafc">{{ p }}</td>{% for d in days %}<td style="padding:8px;text-align:center"><select style="padding:6px;border:1px solid #cbd5e1;border-radius:8px;width:100%"><option>Free</option>{% for s in subjects %}<option>{{ s }}</option>{% endfor %}</select></td>{% endfor %}</tr>{% endfor %}</table></div>
+<p style="color:#64748b;font-size:13px">Tip: Select subject per period, screenshot or print this page for classroom wall.</p>
+{% endblock %}

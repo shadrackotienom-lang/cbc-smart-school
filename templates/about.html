@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block title %}About{% endblock %}{% block content %}
+<div style="text-align:center;padding:20px"><div style="font-size:60px">🎓</div><h1 style="margin:5px 0">CBC Smart School</h1><p style="color:#64748b;font-size:16px">Competency Based Curriculum • Smart School Management System • Eldoret, Kenya</p></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+<div class="card"><h3>🏫 School</h3><p><b>Name:</b> {{ school.name|default:"CBC Smart School" }}<br><b>Code:</b> {{ school.code|default:"-" }}<br><b>Location:</b> {{ school.location|default:"Eldoret" }}, {{ school.county|default:"Uasin Gishu" }}<br><b>Phone:</b> {{ school.phone|default:"-" }}<br><b>Email:</b> {{ school.email|default:"-" }}<br><b>Principal:</b> {{ school.principal|default:"-" }}<br><b>Motto:</b> {{ school.motto|default:"Excellence Through Learning" }}</p></div>
+<div class="card"><h3>✨ Features</h3><p>✅ Learners Full Admission File<br>✅ Teachers & HR (TSC, Salary)<br>✅ Classes, Attendance, Timetable<br>✅ CBC Assessment & Results<br>✅ Fees & Finance<br>✅ E-Learning, Library, Transport<br>✅ Communication, Reports, Audit, Backup</p></div>
+</div>
+<div class="card" style="margin-top:14px;text-align:center"><b>Version:</b> 1.0 • <b>Year:</b> {{ year }} • <b>Term:</b> {{ term }} • Built for Kenyan Schools 🇰🇪</div>
+{% endblock %}

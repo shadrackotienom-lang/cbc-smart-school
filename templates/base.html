@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}CBC Smart School{% endblock %} - CBC Smart School</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: #f1f5f9; color: #0f172a; }
+a { text-decoration: none; }
+.topbar { background: #0a2463; color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.topbar-left b { font-size: 18px; }
+.topbar-left small { display: block; font-size: 12px; opacity: 0.85; font-weight: 400; }
+.menu-btn { display: none; background: #fff; color: #0a2463; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 800; cursor: pointer; }
+.topbar-right { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.topbar-right a { color: #fff; background: #dc2626; padding: 7px 12px; border-radius: 8px; font-weight: 700; }
+.layout { display: flex; min-height: calc(100vh - 54px); }
+.sidebar { width: 260px; background: #fff; border-right: 1px solid #e2e8f0; padding: 14px; position: sticky; top: 54px; height: calc(100vh - 54px); overflow-y: auto; flex-shrink: 0; }
+.sidebar h4 { margin: 16px 0 6px; font-size: 11px; letter-spacing: 1px; color: #94a3b8; text-transform: uppercase; }
+.sidebar h4:first-child { margin-top: 0; }
+.nav-link { display: block; padding: 10px 12px; border-radius: 10px; color: #0f172a; font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.nav-link:hover { background: #eff6ff; color: #0a2463; }
+.nav-link.active { background: #0a2463; color: #fff; }
+.school-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+.school-box b { display: block; font-size: 14px; }
+.school-box small { color: #64748b; font-size: 12px; }
+.main { flex: 1; padding: 16px; overflow-x: auto; }
+.card { background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.btn { background: #0a2463; color: #fff; border: none; border-radius: 10px; padding: 10px 16px; font-weight: 700; cursor: pointer; text-align: center; display: inline-block; }
+.btn-green { background: #059669; }
+table { font-size: 14px; }
+input, select, textarea { font-size: 14px; font-family: inherit; }
+.messages { margin-bottom: 14px; }
+.msg { padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 14px; }
+.msg-success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+.msg-error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.msg-info { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+@media (max-width: 768px) {
+  .menu-btn { display: block; }
+  .sidebar { display: none; position: fixed; left: 0; top: 54px; z-index: 99; width: 260px; box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+  .sidebar.open { display: block; }
+  .main { padding: 12px; }
+  .topbar-left small { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <button class="menu-btn" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰ Menu</button>
+    <span style="font-size:24px">🎓</span>
+    <div><b>{% if school %}{{ school.name }}{% else %}CBC Smart School{% endif %}</b><small>{% if school %}{{ school.motto|default:"Excellence Through Learning" }} • {{ school.current_term|default:"Term 3" }} {{ school.current_year|default:"2026" }}{% else %}Excellence Through Learning{% endif %}</small></div>
+  </div>
+  <div class="topbar-right">
+    <span>👤 {{ request.user.username|default:"Admin" }}</span>
+    <a href="{% url 'logout' %}">Logout</a>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+
+    <div class="school-box">
+      <b>🏫 {% if school %}{{ school.name }}{% else %}CBC Smart School{% endif %}</b>
+      <small>{% if school %}{{ school.code }} • {{ school.location }} • {{ school.county }}{% else %}Add your school in Schools{% endif %}</small><br>
+      <small>📞 {% if school %}{{ school.phone }}{% else %}—{% endif %} • {{ term }} {{ year }}</small>
+    </div>
+
+    <h4>Main</h4>
+    <a class="nav-link" href="{% url 'dashboard' %}">📊 Dashboard</a>
+    <a class="nav-link" href="{% url 'analytics' %}">📈 Analytics</a>
+    <a class="nav-link" href="{% url 'schools' %}">🏫 Schools</a>
+    <a class="nav-link" href="{% url 'school_settings' %}">⚙️ School Settings</a>
+
+    <h4>People</h4>
+    <a class="nav-link" href="{% url 'learners' %}">👧 Learners</a>
+    <a class="nav-link" href="{% url 'teachers' %}">👨‍🏫 Teachers</a>
+    <a class="nav-link" href="{% url 'parents' %}">👨‍👩‍👧 Parents</a>
+    <a class="nav-link" href="{% url 'student' %}">🧑‍🎓 Student Portal</a>
+
+    <h4>Academics</h4>
+    <a class="nav-link" href="{% url 'classes' %}">🏫 Classes</a>
+    <a class="nav-link" href="{% url 'attendance' %}">✅ Attendance</a>
+    <a class="nav-link" href="{% url 'timetable' %}">🗓️ Timetable</a>
+    <a class="nav-link" href="{% url 'results' %}">📊 Results</a>
+    <a class="nav-link" href="{% url 'cbc' %}">📚 CBC Assessment</a>
+    <a class="nav-link" href="{% url 'class_report' %}">📄 Class Report</a>
+    <a class="nav-link" href="{% url 'learning' %}">📖 Learning</a>
+    <a class="nav-link" href="{% url 'assignments' %}">📝 Assignments</a>
+    <a class="nav-link" href="{% url 'library' %}">📚 Library</a>
+
+    <h4>Money</h4>
+    <a class="nav-link" href="{% url 'fees' %}">💰 Fees</a>
+    <a class="nav-link" href="{% url 'finance' %}">💵 Finance</a>
+
+    <h4>Boarding & Transport</h4>
+    <a class="nav-link" href="{% url 'boarding' %}">🏠 Boarding</a>
+    <a class="nav-link" href="{% url 'transport' %}">🚌 Transport</a>
+
+    <h4>More</h4>
+    <a class="nav-link" href="{% url 'communication' %}">💬 Communication</a>
+    <a class="nav-link" href="{% url 'reports' %}">📑 Reports</a>
+    <a class="nav-link" href="{% url 'audit' %}">🔍 Audit Log</a>
+    <a class="nav-link" href="{% url 'backup' %}">💾 Backup</a>
+    <a class="nav-link" href="{% url 'about' %}">ℹ️ About</a>
+
+    <div style="margin-top:16px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px">
+      <b style="font-size:13px">Need Help?</b><br>
+      <small style="color:#64748b">Go to School Settings first, then add Learners, Classes, Fees.</small>
+    </div>
+
+  </div>
+
+  <div class="main">
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <div class="msg {% if message.tags == 'success' %}msg-success{% elif message.tags == 'error' %}msg-error{% else %}msg-info{% endif %}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:20px">CBC Smart School • {% if school %}{{ school.name }} • {{ school.motto|default:"" }}{% endif %} • Term 3 2026</p>
+  </div>
+</div>
+
+<script>
+// Close sidebar on mobile when a link is clicked
+document.querySelectorAll('.sidebar a').forEach(function(a){
+  a.addEventListener('click', function(){
+    if(window.innerWidth <= 768){
+      document.querySelector('.sidebar').classList.remove('open');
+    }
+  });
+});
+// Highlight active menu
+var path = window.location.pathname;
+document.querySelectorAll('.nav-link').forEach(function(a){
+  if(a.getAttribute('href') === path){
+    a.classList.add('active');
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block heading %}👪 Parent Portal — Results, Balances, Notifications{% endblock %}{% block content %}
+<div class="card"><form method="get" style="display:flex;gap:8px"><input name="adm" placeholder="Enter Admission No e.g. EJA/001" value="{{ request.GET.adm }}"><button class="btn">Check My Child →</button></form><p style="font-size:12px;color:#64748b">Parent enters child's Admission Number to see results + balance. No login needed.</p></div>
+{% if learner %}<div class="grid-2" style="margin-top:14px"><div class="card"><h2>{{ learner.full_name }}</h2><p>{{ learner.grade }} {{ learner.stream }} • {{ learner.admission_no }} • {{ learner.school.name }}</p><h3>💰 Fee Balance: KSh {{ balance }}</h3>{% if balance <= 0 %}<span class="badge badge-green">PAID UP</span>{% else %}<span class="badge badge-red">OWING KSh {{ balance }}</span>{% endif %}</div>
+<div class="card"><h3>📝 Results</h3><table><tr><th>Subject</th><th>Score</th><th>CBC</th></tr>{% for r in results %}<tr><td>{{ r.subject }}</td><td>{{ r.score }}</td><td>{{ r.cbc_level }}</td></tr>{% empty %}<tr><td colspan="3">No results yet</td></tr>{% endfor %}</table></div></div>
+{% elif request.GET.adm %}<div class="card" style="background:#fee2e2;margin-top:14px">No learner found with Admission No <b>{{ request.GET.adm }}</b>. Check number.</div>{% endif %}
+{% endblock %}

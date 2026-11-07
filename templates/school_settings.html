@@ -1,0 +1,107 @@
+{% extends 'base.html' %}{% block title %}School Settings{% endblock %}{% block content %}
+<h2 style="margin:0">⚙️ School Settings</h2><p style="color:#64748b">Fill ALL details once — they will show on Dashboard, Reports, Receipts, Results & everywhere. <b>Fields with * are required.</b></p>
+
+<!-- GUIDE BOX -->
+<div class="card" style="background:#eff6ff;border:1px solid #93c5fd;margin-bottom:14px">
+<h3 style="margin:0">📖 How To Use This Page — Read First</h3>
+<p style="font-size:14px;line-height:1.7;margin:8px 0 0">
+<b>1. School Info:</b> Name & Code appear on every report. Use official KNEC / NEMIS name & code.<br>
+<b>2. Location:</b> Helps parents find you & helps County reports.<br>
+<b>3. Leadership:</b> Principal / Deputy / Bursar names appear on report cards & receipts.<br>
+<b>4. Contacts:</b> Phone / Email / WhatsApp are used to contact parents & for SMS.<br>
+<b>5. Money:</b> M-Pesa Till / Paybill + Bank details appear on Fee Receipts so parents know where to pay. If you don't have Paybill, leave blank.<br>
+<b>6. Term:</b> Set Current Term & Year — Dashboard, Fees & Results use this.<br>
+<b>7. Save:</b> Click <b>💾 Save Settings</b> at bottom. If page is empty, it means no school was created yet — go to <a href="{% url 'schools' %}">Schools → Add School</a> first, then come back here.
+</p>
+</div>
+
+{% if not school_obj %}
+<div class="card" style="background:#fef3c7;border:1px solid #fbbf24;text-align:center;padding:20px">
+<h3 style="margin:0">⚠️ No School Found Yet</h3><p>You have not created a school. Create one first, then settings will appear here.</p>
+<a href="{% url 'schools' %}" class="btn">🏫 Go Create School →</a>
+</div>
+{% else %}
+<form method="post" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- SECTION 1 -->
+<h3 style="background:#0a2463;color:#fff;padding:10px;border-radius:10px">1. 🏫 School Information</h3>
+<div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div><label><b>School Name *</b><br><small style="color:#64748b">Official name e.g St. Mary's Primary Eldoret</small></label><input name="name" value="{{ school_obj.name }}" required placeholder="e.g CBC Smart School" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>School Code *</b><br><small style="color:#64748b">KNEC / NEMIS / UPI Code</small></label><input name="code" value="{{ school_obj.code }}" required placeholder="e.g 12345678" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Registration No</b><br><small style="color:#64748b">Ministry Registration No if any</small></label><input name="registration_no" value="{{ school_obj.registration_no|default:'' }}" placeholder="e.g MOE/2020/123" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>School Type</b></label><select name="school_type" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"><option>{{ school_obj.school_type|default:"Public" }}</option><option>Public</option><option>Private</option><option>Faith-Based / Church</option><option>Community</option></select></div>
+<div><label><b>Level</b></label><select name="level" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"><option>{{ school_obj.level|default:"Primary + Junior School" }}</option><option>Pre-Primary Only (PP1-PP2)</option><option>Primary (Grade 1-6)</option><option>Junior School (Grade 7-9)</option><option>Primary + Junior School</option><option>Senior School (Grade 10-12)</option><option>Primary + Junior + Senior</option></select></div>
+<div><label><b>Gender</b></label><select name="gender_type" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"><option>{{ school_obj.gender_type|default:"Mixed" }}</option><option>Mixed</option><option>Boys Only</option><option>Girls Only</option></select></div>
+<div><label><b>Boarding / Day</b></label><select name="boarding_type" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"><option>{{ school_obj.boarding_type|default:"Day" }}</option><option>Day</option><option>Boarding</option><option>Day + Boarding</option></select></div>
+<div><label><b>School Logo</b><br><small style="color:#64748b">Will show on report cards</small></label><input type="file" name="logo" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%">{% if school_obj.logo %}<p>Current: {{ school_obj.logo }}</p>{% endif %}</div>
+</div>
+
+<!-- SECTION 2 -->
+<h3 style="background:#059669;color:#fff;padding:10px;border-radius:10px;margin-top:16px">2. 📍 Location</h3>
+<div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div><label><b>Location / Town *</b></label><input name="location" value="{{ school_obj.location }}" placeholder="e.g Eldoret Town" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>County *</b></label><input name="county" value="{{ school_obj.county }}" placeholder="e.g Uasin Gishu" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Sub-County</b></label><input name="sub_county" value="{{ school_obj.sub_county|default:'' }}" placeholder="e.g Eldoret East" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Ward / Village / Estate</b></label><input name="village" value="{{ school_obj.village|default:'' }}" placeholder="e.g Kimumu, Langas, Kapsoya" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Physical Address</b></label><input name="physical_address" value="{{ school_obj.physical_address|default:'' }}" placeholder="e.g Along Uganda Road, Opp. Mall" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Postal Address</b></label><input name="postal_address" value="{{ school_obj.postal_address|default:'' }}" placeholder="e.g P.O Box 123 - 30100 Eldoret" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+</div>
+
+<!-- SECTION 3 -->
+<h3 style="background:#f97316;color:#fff;padding:10px;border-radius:10px;margin-top:16px">3. 👤 Leadership & Staff</h3>
+<div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div><label><b>Principal / Head Teacher *</b></label><input name="principal" value="{{ school_obj.principal }}" placeholder="Full Name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Principal Phone</b></label><input name="principal_phone" value="{{ school_obj.principal_phone|default:'' }}" placeholder="0722..." style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Deputy Principal / Deputy Head</b></label><input name="deputy" value="{{ school_obj.deputy|default:'' }}" placeholder="Full Name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Senior Teacher</b></label><input name="senior_teacher" value="{{ school_obj.senior_teacher|default:'' }}" placeholder="Full Name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Bursar / Accountant</b></label><input name="bursar" value="{{ school_obj.bursar|default:'' }}" placeholder="Full Name - Handles Fees" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Secretary / Office</b></label><input name="secretary" value="{{ school_obj.secretary|default:'' }}" placeholder="Full Name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+</div>
+
+<!-- SECTION 4 -->
+<h3 style="background:#7c3aed;color:#fff;padding:10px;border-radius:10px;margin-top:16px">4. 📞 Contacts</h3>
+<div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div><label><b>School Phone *</b></label><input name="phone" value="{{ school_obj.phone }}" placeholder="e.g 0722 123 456" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>WhatsApp Number</b><br><small style="color:#64748b">For parent messages</small></label><input name="whatsapp" value="{{ school_obj.whatsapp|default:'' }}" placeholder="e.g 0722 123 456" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>School Email</b></label><input name="email" value="{{ school_obj.email }}" placeholder="e.g info@school.ac.ke" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Website / Facebook</b></label><input name="website" value="{{ school_obj.website|default:'' }}" placeholder="e.g www.school.ac.ke" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+</div>
+
+<!-- SECTION 5 -->
+<h3 style="background:#dc2626;color:#fff;padding:10px;border-radius:10px;margin-top:16px">5. 💰 Money — Where Parents Pay (Shows on Receipts)</h3>
+<div class="card" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div><label><b>M-Pesa Paybill No</b><br><small style="color:#64748b">Leave blank if you use Till only</small></label><input name="mpesa_paybill" value="{{ school_obj.mpesa_paybill|default:'' }}" placeholder="e.g 123456" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>M-Pesa Till No</b></label><input name="mpesa_till" value="{{ school_obj.mpesa_till|default:'' }}" placeholder="e.g 123456" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>M-Pesa Account Name</b><br><small style="color:#64748b">What parent types as Account No — usually Adm No</small></label><input name="mpesa_account_label" value="{{ school_obj.mpesa_account_label|default:'Admission No' }}" placeholder="Admission No" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>M-Pesa Send Money Phone</b></label><input name="mpesa_phone" value="{{ school_obj.mpesa_phone|default:'' }}" placeholder="e.g 0722..." style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Bank Name</b></label><select name="bank_name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"><option>{{ school_obj.bank_name|default:"" }}</option><option>Equity Bank</option><option>KCB Bank</option><option>Co-operative Bank</option><option>NCBA Bank</option><option>Absa Bank</option><option>Stanbic Bank</option><option>Family Bank</option><option>DTB Bank</option><option>Other</option></select></div>
+<div><label><b>Bank Branch</b></label><input name="bank_branch" value="{{ school_obj.bank_branch|default:'' }}" placeholder="e.g Eldoret" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Bank Account No</b></label><input name="bank_account" value="{{ school_obj.bank_account|default:'' }}" placeholder="e.g 1234567890" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Bank Account Name</b></label><input name="bank_account_name" value="{{ school_obj.bank_account_name|default:'' }}" placeholder="e.g CBC Smart School" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+</div>
+
+<!-- SECTION 6 -->
+<h3 style="background:#0891b2;color:#fff;padding:10px;border-radius:10px;margin-top:16px">6. 🎓 School Identity — Motto, Vision, Mission</h3>
+<div class="card" style="display:grid;grid-template-columns:1fr;gap:10px">
+<div><label><b>Motto</b></label><input name="motto" value="{{ school_obj.motto }}" placeholder="e.g Excellence Through Learning" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Vision</b></label><textarea name="vision" placeholder="e.g To be a centre of excellence..." style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%">{{ school_obj.vision|default:'' }}</textarea></div>
+<div><label><b>Mission</b></label><textarea name="mission" placeholder="e.g To nurture learners..." style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%">{{ school_obj.mission|default:'' }}</textarea></div>
+</div>
+
+<!-- SECTION 7 -->
+<h3 style="background:#111827;color:#fff;padding:10px;border-radius:10px;margin-top:16px">7. 📅 Current Term & School Year</h3>
+<div class="card" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+<div><label><b>Current Term</b></label><select name="current_term" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"><option>{{ school_obj.current_term|default:"Term 3" }}</option><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></div>
+<div><label><b>Current Year</b></label><select name="current_year" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"><option>{{ school_obj.current_year|default:"2026" }}</option><option>2025</option><option>2026</option><option>2027</option></select></div>
+<div><label><b>Opening Date</b></label><input type="date" name="opening_date" value="{{ school_obj.opening_date|date:'Y-m-d' }}" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Closing Date</b></label><input type="date" name="closing_date" value="{{ school_obj.closing_date|date:'Y-m-d' }}" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Next Term Opens</b></label><input type="date" name="next_term_date" value="{{ school_obj.next_term_date|date:'Y-m-d' }}" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%"></div>
+<div><label><b>Total Learners (Auto)</b></label><input value="{{ total_learners }} learners • {{ total_teachers }} teachers • {{ total_classes }} classes" disabled style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:100%;background:#f1f5f9"></div>
+</div>
+
+<button class="btn" style="margin-top:16px;width:100%;padding:16px;font-size:16px">💾 Save Settings →</button>
+<p style="text-align:center;color:#64748b;font-size:13px">After saving, go to Dashboard — your school name, term & contacts will update everywhere.</p>
+</form>
+{% endif %}
+{% endblock %}

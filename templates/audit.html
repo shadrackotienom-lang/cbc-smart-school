@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block title %}Audit Log{% endblock %}{% block content %}
+<h2 style="margin:0">🔍 Audit Log</h2><p style="color:#64748b">Who did what • Security tracking</p>
+<table style="width:100%;background:#fff;border-collapse:collapse"><tr style="background:#0a2463;color:#fff"><th style="padding:10px;text-align:left">User</th><th style="text-align:left">Action</th><th>Time</th><th>IP</th></tr>
+{% for log in logs %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:10px"><b>{{ log.user }}</b></td><td>{{ log.action }}</td><td style="text-align:center">{{ log.time }}</td><td style="text-align:center">{{ log.ip }}</td></tr>{% empty %}<tr><td colspan="4" style="padding:20px;text-align:center">No logs yet</td></tr>{% endfor %}</table>
+<div class="card" style="margin-top:14px"><b>ℹ️ Note:</b> Every login, learner add, fee payment and edit is logged here for safety and accountability.</div>
+{% endblock %}

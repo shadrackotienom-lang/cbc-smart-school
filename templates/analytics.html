@@ -1,0 +1,14 @@
+{% extends 'base.html' %}{% block title %}Analytics{% endblock %}{% block content %}
+<h2 style="margin:0">📊 Analytics</h2><p style="color:#64748b">{{ school.name|default:"CBC Smart School" }} • {{ term }} {{ year }} • Total Learners: <b>{{ total_learners }}</b></p>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<div class="card" style="border-top:5px solid #0a2463"><small>Total Learners</small><h1 style="margin:5px 0">{{ total_learners }}</h1></div>
+<div class="card" style="border-top:5px solid #059669"><small>Boys</small><h1 style="margin:5px 0">{{ male_count }}</h1></div>
+<div class="card" style="border-top:5px solid #db2777"><small>Girls</small><h1 style="margin:5px 0">{{ female_count }}</h1></div>
+<div class="card" style="border-top:5px solid #f97316"><small>Classes</small><h1 style="margin:5px 0">{{ by_class|length }}</h1></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+<div class="card"><h3>👧 Learners Per Class</h3><table style="width:100%;border-collapse:collapse">{% for r in by_class %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px"><b>{{ r.classroom__name|default:"No Class" }}</b></td><td style="text-align:right">{{ r.total }}</td></tr>{% empty %}<tr><td>No data yet</td></tr>{% endfor %}</table></div>
+<div class="card"><h3>⚧ By Gender</h3>{% for r in by_gender %}<p><b>{{ r.gender }}:</b> {{ r.total }} <span style="background:#dbeafe;padding:2px 10px;border-radius:20px">{{ r.total }} learners</span></p>{% empty %}<p>No data</p>{% endfor %}<h3 style="margin-top:16px">🚌 Boarding Type</h3>{% for r in by_boarding %}<p><b>{{ r.boarding_type }}:</b> {{ r.total }}</p>{% empty %}<p>No data</p>{% endfor %}<h3 style="margin-top:16px">📍 By Status</h3>{% for r in by_status %}<p><b>{{ r.status }}:</b> {{ r.total }}</p>{% endfor %}</div>
+</div>
+<div class="card" style="margin-top:14px"><h3>🌍 Top Counties</h3><table style="width:100%;border-collapse:collapse">{% for r in by_county %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px">{{ r.county|default:"Unknown" }}</td><td style="text-align:right"><b>{{ r.total }}</b></td></tr>{% empty %}<tr><td>No county data</td></tr>{% endfor %}</table></div>
+{% endblock %}

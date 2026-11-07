@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% block title %}Schools{% endblock %}{% block content %}
+<h2>🏫 Schools</h2><p style="color:#64748b">Manage all branches / schools in your system</p>
+<form method="post" style="background:#fff;padding:18px;border-radius:16px;border:1px solid #e2e8f0;display:grid;grid-template-columns:1fr 1fr;gap:10px">{% csrf_token %}
+<input name="name" placeholder="School Name *" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="code" placeholder="School Code *" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="location" placeholder="Location (e.g Eldoret Town)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="county" placeholder="County" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="phone" placeholder="Phone" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="email" placeholder="Email" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="principal" placeholder="Principal / Head Teacher" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="motto" placeholder="Motto" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<button class="btn" style="grid-column:1/-1">➕ Add School</button></form>
+<h3>All Schools ({{ schools_list|length }})</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+{% for s in schools_list %}<div class="card"><b style="font-size:18px">🏫 {{ s.name }}</b><p style="color:#64748b;margin:6px 0">Code: <b>{{ s.code }}</b> • {{ s.location }}, {{ s.county }}<br>📞 {{ s.phone }} • 📧 {{ s.email }}<br>👤 Principal: {{ s.principal }}<br>💬 {{ s.motto }}</p><a href="{% url 'switch_school' s.id %}" class="btn">Use This School →</a></div>
+{% empty %}<p>No schools yet — add your school above.</p>{% endfor %}</div>
+{% endblock %}

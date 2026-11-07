@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block title %}Parents{% endblock %}{% block content %}
+<h2 style="margin:0">👨‍👩‍👧 Parents / Guardians</h2><p style="color:#64748b">All parents linked to learners • Total: <b>{{ parents_list|length }}</b></p>
+<form method="get" style="display:flex;gap:8px;margin:12px 0"><input name="q" value="{{ request.GET.q }}" placeholder="Search parent name / phone / learner" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;flex:1"><button class="btn">🔍 Search</button></form>
+<div style="overflow-x:auto"><table style="width:100%;background:#fff;border-collapse:collapse;border-radius:12px;overflow:hidden">
+<tr style="background:#0a2463;color:#fff"><th style="padding:10px;text-align:left">Parent 1</th><th style="text-align:left">Phone / WhatsApp</th><th style="text-align:left">Learner</th><th style="text-align:left">Class</th><th style="text-align:left">Parent 2</th><th style="text-align:left">Emergency</th></tr>
+{% for l in parents_list %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:10px"><b>{{ l.parent1_name|default:"-" }}</b><br><small style="color:#64748b">{{ l.parent1_relationship }} • ID {{ l.parent1_id_no }} • {{ l.parent1_occupation }}</small></td><td>📞 {{ l.parent1_phone }}<br>💬 {{ l.parent1_whatsapp }}<br><small>{{ l.parent1_email }}</small></td><td><b>{{ l.full_name }}</b><br><small>{{ l.admission_no }}</small></td><td style="text-align:center">{{ l.classroom }}</td><td>{{ l.parent2_name|default:"-" }}<br><small>{{ l.parent2_phone }}</small></td><td>{{ l.emergency_name|default:"-" }}<br><small>{{ l.emergency_phone }}</small></td></tr>
+{% empty %}<tr><td colspan="6" style="padding:20px;text-align:center">No parents yet — add learners first</td></tr>{% endfor %}</table></div>
+{% endblock %}

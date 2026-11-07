@@ -1,0 +1,10 @@
+{% extends 'base.html' %}{% block content %}<h2>🏫 Classes</h2>
+<form method="post" style="background:#fff;padding:18px;border-radius:16px;display:flex;gap:10px;flex-wrap:wrap">{% csrf_token %}
+<input name="name" placeholder="Class Name (e.g Grade 7)" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;flex:1">
+<input name="stream" placeholder="Stream (East)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;flex:1">
+<input name="teacher" placeholder="Class Teacher Name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;flex:1">
+<input name="capacity" placeholder="Capacity 40" type="number" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;width:120px">
+<button class="btn">➕ Add Class</button></form>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px">
+{% for c in classes_list %}<div class="card"><b style="font-size:18px">{{ c.name }} {{ c.stream }}</b><p style="color:#64748b">👨‍🏫 {{ c.class_teacher_name|default:"No teacher" }}<br>👧 Learners: <b>{{ c.learner_count }}</b> / {{ c.capacity }}</p></div>
+{% empty %}<p>No classes yet</p>{% endfor %}</div>{% endblock %}

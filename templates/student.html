@@ -1,0 +1,15 @@
+{% extends 'base.html' %}{% block title %}Student Portal{% endblock %}{% block content %}
+<h2 style="margin:0">🎓 Student Portal</h2><p style="color:#64748b">Welcome, {{ request.user.username }} • {{ school.name|default:"CBC Smart School" }} • {{ term }} {{ year }}</p>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+<a href="{% url 'timetable' %}" class="card" style="text-decoration:none;color:#0f172a;text-align:center"><div style="font-size:30px">📅</div><b>Timetable</b></a>
+<a href="{% url 'results' %}" class="card" style="text-decoration:none;color:#0f172a;text-align:center"><div style="font-size:30px">📝</div><b>My Results</b></a>
+<a href="{% url 'assignments' %}" class="card" style="text-decoration:none;color:#0f172a;text-align:center"><div style="font-size:30px">📒</div><b>Assignments</b></a>
+<a href="{% url 'learning' %}" class="card" style="text-decoration:none;color:#0f172a;text-align:center"><div style="font-size:30px">💻</div><b>E-Learning</b></a>
+<a href="{% url 'library' %}" class="card" style="text-decoration:none;color:#0f172a;text-align:center"><div style="font-size:30px">📖</div><b>Library</b></a>
+<a href="{% url 'fees' %}" class="card" style="text-decoration:none;color:#0f172a;text-align:center"><div style="font-size:30px">💰</div><b>My Fees</b></a>
+<a href="{% url 'attendance' %}" class="card" style="text-decoration:none;color:#0f172a;text-align:center"><div style="font-size:30px">✅</div><b>Attendance</b></a>
+<a href="{% url 'communication' %}" class="card" style="text-decoration:none;color:#0f172a;text-align:center"><div style="font-size:30px">💬</div><b>Messages</b></a>
+</div>
+<h3>My Classmates</h3><table style="width:100%;background:#fff;border-collapse:collapse"><tr style="background:#0a2463;color:#fff"><th style="padding:10px;text-align:left">Adm No</th><th style="text-align:left">Name</th><th>Class</th><th>Status</th></tr>
+{% for l in learners %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:10px">{{ l.admission_no }}</td><td><b>{{ l.full_name }}</b></td><td style="text-align:center">{{ l.classroom }}</td><td style="text-align:center">{{ l.status }}</td></tr>{% empty %}<tr><td colspan="4" style="padding:20px;text-align:center">No learners yet</td></tr>{% endfor %}</table>
+{% endblock %}

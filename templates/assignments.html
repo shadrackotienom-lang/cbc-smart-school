@@ -1,0 +1,11 @@
+{% extends 'base.html' %}{% block title %}Assignments{% endblock %}{% block content %}
+<h2 style="margin:0">📒 Assignments</h2><p style="color:#64748b">Give homework • Track submission</p>
+<form method="post" style="background:#fff;padding:18px;border-radius:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">{% csrf_token %}
+<input placeholder="Assignment Title *" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<select style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>Maths</option><option>English</option><option>Kiswahili</option><option>Science</option><option>Social Studies</option></select>
+<select style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>All Classes</option>{% for c in classes %}<option>{{ c.name }} {{ c.stream }}</option>{% endfor %}</select>
+<input type="date" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<textarea placeholder="Description / Instructions" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;grid-column:1/-1"></textarea>
+<button class="btn" style="grid-column:1/-1">➕ Create Assignment</button></form>
+<h3>All Assignments ({{ assignments_list|length }})</h3>{% for a in assignments_list %}<div class="card">{{ a.title }}</div>{% empty %}<div class="card" style="text-align:center;color:#94a3b8">No assignments yet — create one above</div>{% endfor %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}{% block title %}Results{% endblock %}{% block content %}
+<h2 style="margin:0">📝 Results / Exams — Full Details</h2><p style="color:#64748b">Term 3 • 2026 • Learners: <b>{{ total_learners_in_results }}</b> • Class Mean: <b>{{ class_mean }}</b> • Deviation = Learner Mean − Class Mean • Mean Deviation = |Deviation|</p>
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:12px 0">
+<div class="card" style="border-top:5px solid #0a2463"><small>Class Mean</small><h1 style="margin:5px 0">{{ class_mean }}</h1><small>Average of all learners</small></div>
+<div class="card" style="border-top:5px solid #059669"><small>Total Learners</small><h1 style="margin:5px 0">{{ total_learners_in_results }}</h1><small>In results</small></div>
+<div class="card" style="border-top:5px solid #f97316"><small>Top Mean</small><h1 style="margin:5px 0">{% if rows %}{{ rows|first }}{% endif %}</h1><small>Check table below</small></div>
+<div class="card" style="border-top:5px solid #7c3aed"><small>Grading</small><p style="margin:5px 0;font-size:13px">A 80+ • B+ 70+ • B 60+ • C 50+ • D 40+ • E Below 30</p></div>
+</div>
+
+<div style="overflow-x:auto"><table style="width:100%;background:#fff;border-collapse:collapse;font-size:13px;min-width:900px">
+<tr style="background:#0a2463;color:#fff"><th style="padding:10px;text-align:left">Pos</th><th style="padding:10px;text-align:left">Adm No</th><th style="text-align:left">Learner Name</th><th>Class</th><th>Gender</th><th>Stream</th>{% for s in subjects|slice:":8" %}<th>{{ s|truncatechars:10 }}</th>{% endfor %}<th>Total</th><th>Mean</th><th>Deviation</th><th>Mean Deviation</th><th>Grade</th><th>CBC Level</th><th>Remarks</th></tr>
+{% for r in rows %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px;text-align:center"><b>{{ r.position }}</b></td><td style="padding:8px"><b>{{ r.learner.admission_no }}</b></td><td><b>{{ r.learner.full_name }}</b><br><small style="color:#64748b">{{ r.learner.nemis_no }} • DOB {{ r.learner.date_of_birth }} • Age {{ r.learner.age }}</small></td><td style="text-align:center">{{ r.learner.classroom }}</td><td style="text-align:center">{{ r.learner.gender }}</td><td style="text-align:center">{{ r.learner.stream }}</td>
+{% for s in subjects|slice:":8" %}<td style="text-align:center"><input type="number" min="0" max="100" placeholder="-" value="{{ r.scores|default:'' }}" style="width:52px;padding:5px;border:1px solid #cbd5e1;border-radius:8px;text-align:center"></td>{% endfor %}
+<td style="text-align:center"><b>{{ r.total }}</b></td><td style="text-align:center"><b>{{ r.mean }}</b></td><td style="text-align:center"><span style="color:{% if r.deviation >= 0 %}#059669{% else %}#dc2626{% endif %}">{% if r.deviation >= 0 %}+{% endif %}{{ r.deviation }}</span></td><td style="text-align:center">{{ r.mean_deviation }}</td><td style="text-align:center"><b>{{ r.grade }}</b></td><td style="text-align:center">{% if r.mean >= 80 %}Exceeding{% elif r.mean >= 60 %}Meeting{% elif r.mean >= 50 %}Approaching{% else %}Below{% endif %}</td><td style="padding:8px">{{ r.remarks }}</td></tr>
+{% empty %}<tr><td colspan="18" style="padding:20px;text-align:center">No learners yet — add learners first, then enter scores</td></tr>{% endfor %}</table></div>
+
+<div class="card" style="margin-top:14px"><h3>📋 How Deviation Works (For Teachers)</h3><p style="font-size:14px;line-height:1.6"><b>Example:</b> If Class Mean = 60 and Learner Mean = 72 → <b>Deviation = 72 − 60 = +12</b> (Above class average by 12). Mean Deviation = <b>|+12| = 12</b>.<br><b>Position:</b> Ranked by Mean — Highest Mean = Position 1.<br><b>Total:</b> Sum of all subject scores. <b>Mean:</b> Total ÷ Number of subjects done. <b>Grade:</b> From Mean. <b>CBC Level:</b> Exceeding (80+), Meeting (60-79), Approaching (50-59), Below (Below 50).</p></div>
+
+<h3 style="margin-top:16px">📚 All CBC Subjects Covered (For Reference)</h3><div style="display:flex;gap:6px;flex-wrap:wrap">{% for s in cbc_subjects %}<span style="background:#dbeafe;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700">{{ s }}</span>{% endfor %}</div>
+<button class="btn" style="margin-top:14px;width:100%;padding:14px">💾 Save Results →</button>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends 'base.html' %}{% block heading %}🎒 Student Portal — Learning Progress & Assignments{% endblock %}{% block content %}
+<div class="card"><form method="get" style="display:flex;gap:8px"><input name="adm" placeholder="Enter Admission No e.g. EJA/001" value="{{ request.GET.adm }}"><button class="btn">My Progress →</button></form></div>
+{% if learner %}<div class="grid-2" style="margin-top:14px"><div class="card"><h2>Hi, {{ learner.full_name }} 👋</h2><p>{{ learner.grade }} {{ learner.stream }} • {{ learner.school.name }}</p><h3>My Results</h3><table><tr><th>Subject</th><th>Score</th><th>CBC</th></tr>{% for r in results %}<tr><td>{{ r.subject }}</td><td>{{ r.score }}</td><td>{{ r.cbc_level }}</td></tr>{% empty %}<tr><td colspan="3">No results yet</td></tr>{% endfor %}</table></div>
+<div class="card"><h3>📚 My Assignments</h3>{% for a in assignments %}<div style="border:1px solid #e2e8f0;border-radius:10px;padding:12px;margin:6px 0"><b>{{ a.title }}</b> — {{ a.subject }}<p>{{ a.description }}</p><small>Due: {{ a.due_date|default:"—" }}</small></div>{% empty %}<p>No assignments for your grade yet.</p>{% endfor %}<a class="btn" href="/learning/" style="margin-top:10px">🎥 Go to Learning →</a></div></div>
+{% elif request.GET.adm %}<div class="card" style="background:#fee2e2;margin-top:14px">No learner found.</div>{% endif %}
+{% endblock %}

@@ -1,0 +1,140 @@
+{% extends 'base.html' %}{% block title %}Fees{% endblock %}{% block content %}
+<h2 style="margin:0">💰 Fees</h2><p style="color:#64748b">School decides ALL amounts • {{ selected_term }} {{ selected_year }} • Expected: <b>KSh {{ total_expected }}</b> • Collected: <b>KSh {{ total_paid }}</b> • Balance: <b style="color:#dc2626">KSh {{ total_balance }}</b></p>
+
+<div class="card" style="margin-bottom:14px"><h3>➕ 1. Set Fee Structure (School Decides)</h3><p style="color:#64748b;font-size:13px">Leave Class blank = Applies to ALL classes. Fill ONLY vote heads your school charges. Leave others 0.</p>
+<form method="post" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">{% csrf_token %}<input type="hidden" name="set_structure" value="1">
+<select name="classroom" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option value="">-- ALL Classes --</option>{% for c in classes %}<option value="{{ c.id }}">{{ c.name }} {{ c.stream }}</option>{% endfor %}</select>
+<select name="term" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>Term 1</option><option>Term 2</option><option selected>Term 3</option></select>
+<select name="year" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>2025</option><option selected>2026</option><option>2027</option></select>
+<input name="tuition" type="number" placeholder="Tuition / Term Fee (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="lunch" type="number" placeholder="Lunch / Meals (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="transport" type="number" placeholder="Transport (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="boarding" type="number" placeholder="Boarding (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="exam" type="number" placeholder="Exam / Assessment (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="activity" type="number" placeholder="Activity / Clubs (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="uniform" type="number" placeholder="Uniform (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="books" type="number" placeholder="Books / Stationery (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="computer" type="number" placeholder="Computer / ICT (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="medical" type="number" placeholder="Medical / Insurance (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="development" type="number" placeholder="Development / PTA (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="other_label" placeholder="Other Label e.g Swimming" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="other" type="number" placeholder="Other Amount (KSh)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="notes" placeholder="Notes (e.g Sibling discount 10%)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px;grid-column:1/-1">
+<button class="btn" style="grid-column:1/-1;padding:14px">💾 Save Fee Structure →</button></form></div>
+
+<h3>📋 Saved Fee Structures</h3><table style="width:100%;background:#fff;border-collapse:collapse;margin-bottom:16px"><tr style="background:#0a2463;color:#fff"><th style="padding:10px;text-align:left">Class</th><th>Term</th><th>Tuition</th><th>Lunch</th><th>Transport</th><th>Boarding</th><th>Exam</th><th>Other Vote Heads</th><th>Total</th></tr>
+{% for s in structures %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:10px"><b>{{ s.classroom|default:"ALL Classes" }}</b></td><td style="text-align:center">{{ s.term }} {{ s.year }}</td><td style="text-align:center">{{ s.tuition }}</td><td style="text-align:center">{{ s.lunch }}</td><td style="text-align:center">{{ s.transport }}</td><td style="text-align:center">{{ s.boarding }}</td><td style="text-align:center">{{ s.exam }}</td><td style="text-align:center">Activity {{ s.activity }} + Uniform {{ s.uniform }} + Books {{ s.books }} + ICT {{ s.computer }} + Medical {{ s.medical }} + Dev {{ s.development }} + {{ s.other_label }} {{ s.other }}</td><td style="text-align:center"><b>KSh {{ s.total }}</b></td></tr>
+{% empty %}<tr><td colspan="9" style="padding:20px;text-align:center;color:#94a3b8">No fee structure yet — school must set amounts above</td></tr>{% endfor %}</table>
+
+<!-- ===== 2. PAYMENT OPTIONS - M-PESA / BANK / CASH / ALL ===== -->
+<div class="card" style="margin-bottom:14px"><h3>➕ 2. Record Payment — Choose Payment Option</h3>
+<p style="color:#64748b;font-size:13px">Select how parent paid. Form changes automatically — M-Pesa shows M-Pesa fields, Bank shows Bank fields, Cash shows Cash receipt.</p>
+
+<!-- Payment Option Buttons -->
+<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px">
+<button type="button" onclick="selectPay('Cash')" id="btn-Cash" class="pay-btn" style="padding:12px;border:2px solid #0a2463;border-radius:12px;background:#0a2463;color:#fff;font-weight:800;cursor:pointer">💵 Cash</button>
+<button type="button" onclick="selectPay('M-Pesa')" id="btn-M-Pesa" class="pay-btn" style="padding:12px;border:2px solid #059669;border-radius:12px;background:#fff;color:#059669;font-weight:800;cursor:pointer">📱 M-Pesa</button>
+<button type="button" onclick="selectPay('Bank')" id="btn-Bank" class="pay-btn" style="padding:12px;border:2px solid #0a2463;border-radius:12px;background:#fff;color:#0a2463;font-weight:800;cursor:pointer">🏦 Bank Transfer</button>
+<button type="button" onclick="selectPay('Cheque')" id="btn-Cheque" class="pay-btn" style="padding:12px;border:2px solid #f97316;border-radius:12px;background:#fff;color:#f97316;font-weight:800;cursor:pointer">🧾 Cheque</button>
+<button type="button" onclick="selectPay('Bursary')" id="btn-Bursary" class="pay-btn" style="padding:12px;border:2px solid #7c3aed;border-radius:12px;background:#fff;color:#7c3aed;font-weight:800;cursor:pointer">🎓 Bursary / Scholarship</button>
+<button type="button" onclick="selectPay('Other')" id="btn-Other" class="pay-btn" style="padding:12px;border:2px solid #64748b;border-radius:12px;background:#fff;color:#64748b;font-weight:800;cursor:pointer">➕ Other</button>
+</div>
+
+<form method="post" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">{% csrf_token %}<input type="hidden" name="record_payment" value="1">
+<input type="hidden" name="method" id="methodInput" value="Cash">
+<select name="learner" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option value="">-- Select Learner --</option>{% for l in learners %}<option value="{{ l.id }}">{{ l.full_name }} - {{ l.admission_no }} - {{ l.classroom }}</option>{% endfor %}</select>
+<select name="fee_structure" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option value="">-- Fee Structure --</option>{% for s in structures %}<option value="{{ s.id }}">{{ s.classroom|default:"ALL" }} - {{ s.term }} - KSh {{ s.total }}</option>{% endfor %}</select>
+<input name="paid_by" placeholder="Paid By (Parent Name)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="amount_expected" type="number" placeholder="Amount Expected (KSh)" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="amount_paid" type="number" placeholder="Amount Paid (KSh)" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="receipt_no" placeholder="Receipt No *" required style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input type="date" name="date" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<select name="term" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>Term 1</option><option>Term 2</option><option selected>Term 3</option></select>
+<select name="year" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>2025</option><option selected>2026</option></select>
+
+<!-- M-PESA FIELDS - Shows only when M-Pesa selected -->
+<div id="box-M-Pesa" class="pay-box" style="display:none;grid-column:1/-1;background:#ecfdf5;border:2px solid #059669;border-radius:12px;padding:14px">
+<h4 style="margin:0 0 10px;color:#059669">📱 M-Pesa Details</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+<select name="mpesa_type" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>Send Money (Phone)</option><option>Paybill</option><option>Till Number (Buy Goods)</option><option>Pochi la Biashara</option></select>
+<input name="mpesa_code" placeholder="M-Pesa Code e.g QK123ABC" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="mpesa_phone" placeholder="Phone that sent M-Pesa e.g 0722..." style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="mpesa_till" placeholder="Till / Paybill No (School's)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="mpesa_account" placeholder="Account No (Adm No / Learner Name)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="mpesa_name" placeholder="M-Pesa Sender Name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+</div><p style="font-size:12px;color:#64748b;margin:8px 0 0">Example: Parent sends to Till 123456, Code QK7X... comes in SMS. Copy code here.</p>
+</div>
+
+<!-- BANK FIELDS -->
+<div id="box-Bank" class="pay-box" style="display:none;grid-column:1/-1;background:#eff6ff;border:2px solid #0a2463;border-radius:12px;padding:14px">
+<h4 style="margin:0 0 10px;color:#0a2463">🏦 Bank Transfer Details</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+<select name="bank_name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option value="">-- Select Bank --</option><option>Equity Bank</option><option>KCB Bank</option><option>Co-operative Bank</option><option>NCBA Bank</option><option>Absa Bank</option><option>Stanbic Bank</option><option>Family Bank</option><option>DTB Bank</option><option>Other Bank</option></select>
+<input name="bank_branch" placeholder="Branch e.g Eldoret" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="bank_account" placeholder="School Bank Account No" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="bank_ref" placeholder="Bank Ref / Transaction ID" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="bank_sender" placeholder="Sender Name / Account Name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="bank_slip" placeholder="Slip / Deposit No" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+</div>
+</div>
+
+<!-- CHEQUE FIELDS -->
+<div id="box-Cheque" class="pay-box" style="display:none;grid-column:1/-1;background:#fff7ed;border:2px solid #f97316;border-radius:12px;padding:14px">
+<h4 style="margin:0 0 10px;color:#f97316">🧾 Cheque Details</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+<input name="cheque_no" placeholder="Cheque No" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="cheque_bank" placeholder="Cheque Bank" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="cheque_date" type="date" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+</div>
+</div>
+
+<!-- CASH FIELDS -->
+<div id="box-Cash" class="pay-box" style="display:block;grid-column:1/-1;background:#f8fafc;border:2px solid #0a2463;border-radius:12px;padding:14px">
+<h4 style="margin:0 0 10px">💵 Cash Details</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<input name="cash_received_by" placeholder="Received By (Staff Name)" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="cash_notes" placeholder="Notes e.g Paid in office, counted" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+</div><p style="font-size:12px;color:#64748b;margin:8px 0 0">Cash must be given a Receipt No above. Keep receipt book.</p>
+</div>
+
+<!-- BURSARY FIELDS -->
+<div id="box-Bursary" class="pay-box" style="display:none;grid-column:1/-1;background:#f5f3ff;border:2px solid #7c3aed;border-radius:12px;padding:14px">
+<h4 style="margin:0 0 10px;color:#7c3aed">🎓 Bursary / Scholarship Details</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+<select name="bursary_source" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px"><option>CDF Bursary</option><option>County Bursary</option><option>NGO / Church</option><option>School Scholarship</option><option>HELB / Other</option></select>
+<input name="bursary_ref" placeholder="Bursary Ref / Letter No" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="bursary_sponsor" placeholder="Sponsor Name" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+</div>
+</div>
+
+<!-- OTHER FIELDS -->
+<div id="box-Other" class="pay-box" style="display:none;grid-column:1/-1;background:#f1f5f9;border:2px solid #64748b;border-radius:12px;padding:14px">
+<h4 style="margin:0 0 10px">➕ Other Payment Method</h4>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<input name="other_method" placeholder="Other Method e.g Airtel Money, T-Kash, Barter, In-Kind" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+<input name="other_ref" placeholder="Reference / Details" style="padding:11px;border:1px solid #cbd5e1;border-radius:10px">
+</div>
+</div>
+
+<button class="btn" style="grid-column:1/-1;background:#059669;padding:14px">💾 Record Payment →</button></form></div>
+
+<script>
+function selectPay(method){
+  document.getElementById('methodInput').value = method;
+  document.querySelectorAll('.pay-box').forEach(b=>b.style.display='none');
+  var box = document.getElementById('box-'+method);
+  if(box) box.style.display='block';
+  document.querySelectorAll('.pay-btn').forEach(b=>{b.style.background='#fff'; b.style.color='#0f172a';});
+  var active = document.getElementById('btn-'+method);
+  if(active){ active.style.background='#0a2463'; active.style.color='#fff'; if(method==='M-Pesa'){active.style.background='#059669';} if(method==='Cheque'){active.style.background='#f97316';} if(method==='Bursary'){active.style.background='#7c3aed';} }
+}
+</script>
+
+<h3>👧 Learner Balances — {{ selected_term }} {{ selected_year }}</h3><div style="overflow-x:auto"><table style="width:100%;background:#fff;border-collapse:collapse"><tr style="background:#059669;color:#fff"><th style="padding:10px;text-align:left">Adm No</th><th style="text-align:left">Learner</th><th>Class</th><th>Parent</th><th>Phone</th><th>Expected</th><th>Paid</th><th>Balance</th><th>Status</th></tr>
+{% for b in learner_balances %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:10px"><b>{{ b.learner.admission_no }}</b></td><td><b>{{ b.learner.full_name }}</b><br><small>{{ b.learner.fee_category }} • {{ b.learner.scholarship }}</small></td><td style="text-align:center">{{ b.learner.classroom }}</td><td>{{ b.learner.parent1_name }}</td><td style="text-align:center">{{ b.learner.parent1_phone }}</td><td style="text-align:center">KSh {{ b.expected }}</td><td style="text-align:center">KSh {{ b.paid }}</td><td style="text-align:center"><b style="color:{% if b.balance > 0 %}#dc2626{% else %}#059669{% endif %}">KSh {{ b.balance }}</b></td><td style="text-align:center">{% if b.balance <= 0 %}✅ Cleared{% elif b.paid > 0 %}🟡 Partial{% else %}🔴 Unpaid{% endif %}</td></tr>
+{% empty %}<tr><td colspan="9" style="padding:20px;text-align:center">No learners</td></tr>{% endfor %}</table></div>
+
+<h3 style="margin-top:16px">🧾 Recent Payments — By Method</h3><table style="width:100%;background:#fff;border-collapse:collapse"><tr style="background:#f8fafc"><th style="padding:10px;text-align:left">Date</th><th style="text-align:left">Learner</th><th>Term</th><th>Method</th><th>Receipt</th><th>M-Pesa / Bank Ref</th><th>Paid By</th><th>Paid</th><th>Balance</th></tr>
+{% for p in payments %}<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:10px">{{ p.date }}</td><td><b>{{ p.learner.full_name }}</b> • {{ p.learner.admission_no }}</td><td style="text-align:center">{{ p.term }} {{ p.year }}</td><td style="text-align:center"><b>{% if p.method == 'M-Pesa' %}📱 M-Pesa{% elif p.method == 'Bank' %}🏦 Bank{% elif p.method == 'Cash' %}💵 Cash{% elif p.method == 'Cheque' %}🧾 Cheque{% elif p.method == 'Bursary' %}🎓 Bursary{% else %}{{ p.method }}{% endif %}</b></td><td style="text-align:center">{{ p.receipt_no }}</td><td style="text-align:center">{{ p.mpesa_code }} {{ p.bank_ref|default:"" }} {{ p.cheque_no|default:"" }}</td><td>{{ p.paid_by }}</td><td style="text-align:center">KSh {{ p.amount_paid }}</td><td style="text-align:center">KSh {{ p.balance }}</td></tr>
+{% empty %}<tr><td colspan="9" style="padding:20px;text-align:center">No payments yet</td></tr>{% endfor %}</table>
+{% endblock %}
